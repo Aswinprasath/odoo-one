@@ -1,0 +1,41 @@
+.tables-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+
+  margin-top: 20px;
+}
+
+.table-card {
+  height: 140px;
+
+  border-radius: 12px;
+
+  display: flex;
+  flex-direction: column;
+
+  justify-content: center;
+  align-items: center;
+
+  cursor: pointer;
+
+  color: white;
+
+  transition: 0.2s;
+}
+
+.table-card:hover {
+  transform: scale(1.03);
+}
+
+.available {
+  background: #16a34a;
+}
+
+.occupied {
+  background: #dc2626;
+}
+
+.reserved {
+  background: #f59e0b;
+}
