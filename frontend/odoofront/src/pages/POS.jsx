@@ -1,9 +1,11 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import api from "../services/api";
 import "./POS.css";
-import products from "../data/products";
+
 import { useRestaurant } from "../context/RestaurantContext";
 
 export default function POS() {
+    
     const { createOrder } = useRestaurant();
     const [cart, setCart] = useState([]);
     const [selectedCategory, setSelectedCategory] =
@@ -11,6 +13,19 @@ export default function POS() {
 
     const [searchTerm, setSearchTerm] =
         useState("");
+    const [products, setProducts] = useState([]);
+
+    useEffect(() => {
+
+        api.get("/products")
+            .then((res) => {
+                setProducts(res.data);
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+
+    }, []);
 
     const addToCart = (product) => {
         const existing = cart.find(
@@ -74,22 +89,44 @@ export default function POS() {
     );
 
     const handleCheckout = () => {
+
         if (cart.length === 0) {
             alert("Cart is empty");
             return;
         }
 
-        const order = {
-            id: Date.now(),
-            table: "T1",
-            items: cart,
-            total,
-            status: "Pending",
+        const orderData = {
+
+            table_id: 1,
+            customer_id: 1,
+
+            subtotal: total,
+            tax: 0,
+            discount: 0,
+            total: total,
+
+            items: cart.map(item => ({
+
+                product_id: item.id,
+                qty: item.quantity,
+                price: item.price,
+                total: item.price * item.quantity
+
+            }))
         };
 
-        createOrder(order);
+        api.post("/orders", orderData)
+            .then(() => {
 
-        alert("Order Created");
+                alert("Order Created");
+
+                setCart([]);
+
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+
     };
 
     const filteredProducts = products.filter(
@@ -163,7 +200,7 @@ export default function POS() {
                             onClick={() => addToCart(product)}
                         >
                             <div className="product-icon">
-                                {product.emoji}
+                                🍽️
                             </div>
 
                             <div className="product-name">
@@ -171,7 +208,7 @@ export default function POS() {
                             </div>
 
                             <div className="product-category">
-                                {product.category}
+                                {product.category_name}
                             </div>
 
                             <div className="product-price">
