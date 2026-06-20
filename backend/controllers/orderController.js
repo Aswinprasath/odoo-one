@@ -184,7 +184,6 @@ exports.dashboard = (req, res) => {
       SUM(total) AS revenue,
       AVG(total) AS averageOrderValue
     FROM orders
-    WHERE payment_status='paid'
     `,
     (err, result) => {
 
